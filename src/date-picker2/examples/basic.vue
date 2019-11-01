@@ -17,7 +17,7 @@ export default {
 	},
 	data() {
 		return {
-			value: new Date()
+			value: '09:41:00'
 		};
 	},
 	computed: {

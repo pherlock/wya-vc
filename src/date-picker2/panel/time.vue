@@ -2,9 +2,9 @@
 	<div class="vc-time-panel">
 		<vc-time-spinner
 			ref="timeSpinner"
-			:hours="1"
-			:minutes="2"
-			:seconds="3"
+			:hours="timeSlots[0]"
+			:minutes="timeSlots[1]"
+			:seconds="timeSlots[2]"
 			@change="handleChange"
 		/>
 		<div class="vc-time-panel__confirm">
@@ -25,10 +25,19 @@ export default {
 		'vc-time-spinner': TimeSpinner,
 		'vc-button': Button
 	},
+	filters: {
+		capitalize(str) {
+			return str[0].toUpperCase() + str.slice(1);
+		}
+	},
 	props: {
 		value: {
 			type: Array,
 			required: true
+		},
+		format: {
+			type: String,
+			default: 'HH:mm:ss'
 		}
 	},
 	data() {
@@ -37,7 +46,10 @@ export default {
 		};
 	},
 	computed: {
-
+		timeSlots() {
+			if (!this.value[0]) return [];
+			return ['getHours', 'getMinutes', 'getSeconds'].map(slot => this.date[slot]());
+		}
 	},
 	watch: {
 		value() {
@@ -50,9 +62,14 @@ export default {
 		
 	},
 	methods: {
-		handleChange(val) {
-			console.log(val, '90909');
+		handleChange(date, emit = true) {
+			const newDate = new Date(this.date);
+			Object.keys(date).forEach(type => {
+				newDate[`set${this.capitalize(type)}`](date[type]);
+			});
+			console.log(newDate);
 			
+			if (emit) this.$emit('pick', newDate, 'time');
 		},
 		handleCancel() {
 

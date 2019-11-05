@@ -17,7 +17,7 @@ export default {
 	},
 	data() {
 		return {
-			value: '09:41:00'
+			value: '01:01:00'
 		};
 	},
 	computed: {

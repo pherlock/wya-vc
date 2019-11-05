@@ -2,10 +2,10 @@
 	<div class="vc-time-picker-spinner">
 		<div v-if="type === 'timerange'" class="vc-time-picker-spinner__title">{{ title }}</div>
 		<div class="vc-time-picker-spinner__cells">
-			<div class="vc-time-picker-spinner__list">
+			<div ref="hours" class="vc-time-picker-spinner__list">
 				<ul class="vc-time-picker-spinner__list-ul">
 					<li 
-						v-for="item in hourArray" 
+						v-for="item in hoursArray" 
 						:key="item.val" 
 						:class="{'is-selected' : item.selected}"
 						class="vc-time-picker-spinner__list-cell"
@@ -15,10 +15,10 @@
 					</li>
 				</ul>
 			</div>
-			<div class="vc-time-picker-spinner__list">
+			<div ref="minutes" class="vc-time-picker-spinner__list">
 				<ul class="vc-time-picker-spinner__list-ul">
 					<li 
-						v-for="item in minuteArray" 
+						v-for="item in minutesArray" 
 						:key="item.val" 
 						:class="{'is-selected' : item.selected}"
 						class="vc-time-picker-spinner__list-cell"
@@ -28,10 +28,10 @@
 					</li>
 				</ul>
 			</div>
-			<div class="vc-time-picker-spinner__list">
+			<div ref="seconds" class="vc-time-picker-spinner__list">
 				<ul class="vc-time-picker-spinner__list-ul">
 					<li 
-						v-for="item in secondArray" 
+						v-for="item in secondsArray" 
 						:key="item.val" 
 						:class="{'is-selected' : item.selected}"
 						class="vc-time-picker-spinner__list-cell"
@@ -45,7 +45,9 @@
 	</div>
 </template>
 <script>
+import { scrollTop, firstUpperCase } from "../util";
 
+const timeParts = ['hours', 'minutes', 'seconds'];
 export default {
 	name: "vc-time-picker-spinner",
 	components: {
@@ -60,67 +62,101 @@ export default {
 		title: String,
 		hours: {
 			type: [Number, String],
+			default: null
 		},
 		minutes: {
 			type: [Number, String],
+			default: null
 		},
 		seconds: {
 			type: [Number, String],
+			default: null
 		},
 	},
 	data() {
 		return {
+			compiled: false,
+			focusedColumn: -1, // which column inside the picker
+			focusedTime: [0, 0, 0] // the values array into [hh, mm, ss]
+
 		};
 	},
 	computed: {
-		hourArray() {
+		hoursArray() {
+			console.log(22323);
+			
 			let hour = [];
+			const focusedHour = this.focusedColumn === 0 && this.focusedTime[0];
 			for (let i = 0; i < 24; i++) {
 				let oHour = {
 					val: i,
 					selected: false
 				};
+				hour.focused = i === focusedHour;
 				if (this.hours == i) oHour.selected = true;
 				hour.push(oHour);
 			}
 			return hour;
 		},
-		minuteArray() {
+		minutesArray() {
 			let minute = [];
+			const focusedMinute = this.focusedColumn === 1 && this.focusedTime[1];
 			for (let i = 0; i < 60; i++) {
 				let oMinute = {
 					val: i,
 					selected: false
 				};
+				minute.focused = i === focusedMinute;
 				if (this.minutes == i) oMinute.selected = true;
 				minute.push(oMinute);
 			}
 			return minute;
 		},
-		secondArray() {
+		secondsArray() {
 			let second = [];
+			const focusedMinute = this.focusedColumn === 2 && this.focusedTime[2];
 			for (let i = 0; i < 60; i++) {
 				let oSecond = {
 					val: i,
 					selected: false
 				};
+				second.focused = i === focusedMinute;
 				if (this.seconds == i) oSecond.selected = true;
 				second.push(oSecond);
 			}
 			return second;
-		}
+		},
 	},
 	watch: {
 		// 检测时分秒，把对应的列移到指定位置
 		hours(val) {
-
+			console.log('测了');
+			
+			if (!this.compiled) return;
+			this.scroll('hours', this.hoursArray.findIndex(obj => obj.val == val));
 		},
 		minutes(val) {
-
+			console.log(val);
+			
+			if (!this.compiled) return;
+			this.scroll('minutes', this.minutesArray.findIndex(obj => obj.val == val));
 		},
 		seconds(val) {
-
+			console.log(val);
+			if (!this.compiled) return;
+			this.scroll('seconds', this.secondsArray.findIndex(obj => obj.val == val));
+		},
+		focusedTime(updated, old) {
+			timeParts.forEach((part, i) => {
+				if (updated[i] === old[i] || typeof updated[i] === 'undefined') return;
+				const valueIndex = this[`${part}Array`].findIndex(obj => obj.text === updated[i]);
+				this.scroll(part, valueIndex);
+			});
 		}
+
+	},
+	mounted() {
+		this.$nextTick(() => this.compiled = true);
 	},
 	methods: {
 		handleClick(type, item) {
@@ -129,7 +165,22 @@ export default {
 			};
 			this.$emit('change', data);
 		},
-	}
+		scroll(type, index) {
+			const from = this.$refs[type].scrollTop;
+			const to = 24 * this.getScrollIndex(type, index);
+			scrollTop(this.$refs[type], from, to, 500);
+		},
+		getScrollIndex(type, index) {
+			const Type = firstUpperCase(type);
+			// const disabled = this[`disabled${Type}`];
+			// if (disabled.length && this.hideDisabledOptions) {
+			// 	let _count = 0;
+			// 	disabled.forEach(item => (item <= index ? _count++ : ''));
+			// 	index -= _count;
+			// }
+			return index;
+		},
+	},
 };
 </script>
 <style lang="scss">

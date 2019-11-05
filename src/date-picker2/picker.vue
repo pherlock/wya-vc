@@ -81,17 +81,22 @@ export default {
 		const isRange = this.type.includes('range');
 		const emptyArray = isRange ? [null, null] : [null];
 		const initialValue = isEmptyArray((isRange ? this.value : [this.value]) || []) ? emptyArray : this.parseDate(this.value);
-		console.log(initialValue, '9090');
 		
 		return {
 			timeValue: '',
-			internalValue: initialValue
+			internalValue: initialValue,
+			focusedDate: initialValue[0] || new Date()
 		};
 	},
 	computed: {
 		isConfirm() {
 			return false;
 		}
+	},
+	watch: {
+		value(val) {
+			this.internalValue = this.parseDate(val);
+		},
 	},
 	mounted() {
 		console.log(this.panel);
@@ -114,8 +119,6 @@ export default {
 			
 		},
 		parseDate(val) {
-			console.log(val);
-			
 			const isRange = this.type.includes('range');
 			const type = this.type;
 			const parser = (

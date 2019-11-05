@@ -15,6 +15,8 @@ export const formatDate = function (date, format) {
 };
 
 export const parseDate = function (string, format) {
+	console.log(dateUtil.parse(string, format || 'yyyy-MM-dd'));
+	
 	return dateUtil.parse(string, format || 'yyyy-MM-dd');
 };
 
@@ -38,6 +40,8 @@ const RANGE_PARSER = function (params) {
 };
 
 const DATE_PARSER = function (text, format) {
+	console.log(parseDate(text, format), '9090909');
+	
 	return parseDate(text, format);
 };
 
@@ -65,3 +69,45 @@ export const TYPE_VALUE_RESOLVER_MAP = {
 		parser: DATE_PARSER
 	}
 };
+
+
+
+// scrollTop animation
+export function scrollTop(el, from = 0, to, duration = 500, endCallback) {
+	if (!window.requestAnimationFrame) {
+		window.requestAnimationFrame = (
+			window.webkitRequestAnimationFrame
+            || window.mozRequestAnimationFrame
+            || window.msRequestAnimationFrame
+            || function (callback) { return window.setTimeout(callback, 1000 / 60); }
+		);
+	}
+	const difference = Math.abs(from - to);
+	const step = Math.ceil(difference / duration * 50);
+
+	function scroll(start, end, step) {
+		if (start === end) {
+			endCallback && endCallback();
+			return;
+		}
+
+		let d = (start + step > end) ? end : start + step;
+		if (start > end) {
+			d = (start - step < end) ? end : start - step;
+		}
+
+		if (el === window) {
+			window.scrollTo(d, d);
+		} else {
+			el.scrollTop = d;
+		}
+		window.requestAnimationFrame(() => scroll(d, end, step));
+	}
+	scroll(from, to, step);
+}
+
+// firstUpperCase
+function firstUpperCase(str) {
+	return str.toString()[0].toUpperCase() + str.toString().slice(1);
+}
+export { firstUpperCase };

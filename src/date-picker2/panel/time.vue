@@ -19,6 +19,8 @@ import TimeSpinner from "../base/time-spinner";
 import Button from "../../button/index";
 import { initTimeDate } from "../util";
 
+const capitalize = (str) => str[0].toUpperCase() + str.slice(1);
+
 export default {
 	name: 'vc-time-panel',
 	components: {
@@ -26,9 +28,7 @@ export default {
 		'vc-button': Button
 	},
 	filters: {
-		capitalize(str) {
-			return str[0].toUpperCase() + str.slice(1);
-		}
+		
 	},
 	props: {
 		value: {
@@ -65,7 +65,7 @@ export default {
 		handleChange(date, emit = true) {
 			const newDate = new Date(this.date);
 			Object.keys(date).forEach(type => {
-				newDate[`set${this.capitalize(type)}`](date[type]);
+				newDate[`set${capitalize(type)}`](date[type]);
 			});
 			console.log(newDate);
 			

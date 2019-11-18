@@ -4,6 +4,7 @@
 		<h1>Basic</h1>353
 		<vc-time-picker
 			:value="value"
+			confirm
 		/>
 	</div>
 </template>

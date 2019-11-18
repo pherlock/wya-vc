@@ -6,7 +6,7 @@
 			@click.native="handleDropStop"
 		>
 			<vc-input
-				v-model="timeValue"
+				:value="timeValue"
 				:placeholder="placeholder"
 				:disabled="disabled"
 				clearable
@@ -22,6 +22,8 @@
 					:type="type"
 					:value="internalValue"
 					:confirm="isConfirm"
+					:selection-mode="selectionMode"
+					@pick="onPick"
 				/>
 			</template>
 		</vc-dropdown>
@@ -34,6 +36,14 @@ import Dropdown from "../dropdown/index";
 import { DEFAULT_FORMATS, TYPE_VALUE_RESOLVER_MAP, getDayCountOfMonth } from "./util";
 
 const isEmptyArray = val => val.reduce((isEmpty, str) => (isEmpty && !str) || (typeof str === 'string' && str.trim() === ''), true);
+
+const extractTime = date => {
+	if (!date) return [0, 0, 0];
+	return [
+		date.getHours(), date.getMinutes(), date.getSeconds()
+	];
+};
+
 export default {
 	name: "vc-time-picker",
 	components: {
@@ -83,15 +93,25 @@ export default {
 		const initialValue = isEmptyArray((isRange ? this.value : [this.value]) || []) ? emptyArray : this.parseDate(this.value);
 		
 		return {
-			timeValue: '',
 			internalValue: initialValue,
-			focusedDate: initialValue[0] || new Date()
+			focusedDate: initialValue[0] || new Date(),
+			selectionMode: this.onSelectionModeChange(this.type)
 		};
 	},
 	computed: {
 		isConfirm() {
-			return false;
-		}
+			return this.confirm || this.type === 'datetime' || this.type === 'datetimerange' || this.multiple;
+		},
+		timeValue() {
+			return this.formatDate(this.internalValue);
+		},
+		publicStringValue() {
+			const { formatDate, publicVModelValue, type } = this;
+			if (type.match(/^time/)) return publicVModelValue;
+			if (this.multiple) return formatDate(publicVModelValue);
+			return Array.isArray(publicVModelValue) ? publicVModelValue.map(formatDate) : formatDate(publicVModelValue);
+		},
+
 	},
 	watch: {
 		value(val) {
@@ -99,10 +119,13 @@ export default {
 		},
 	},
 	mounted() {
-		console.log(this.panel);
-		
 	},
 	methods: {
+		onSelectionModeChange(type) {
+			if (type.match(/^date/)) type = 'date';
+			this.selectionMode = /(year|month|date|time)/.test(type) && type;
+			return this.selectionMode;
+		},
 		handleChange() {
 
 		},
@@ -118,6 +141,12 @@ export default {
 		handleDropStop() {
 			
 		},
+		emitChange(type) {
+			this.$nextTick(() => {
+				this.$emit('change', this.publicStringValue, type);
+				this.dispatch('FormItem', 'form-change', this.publicStringValue);
+			});
+		},
 		parseDate(val) {
 			const isRange = this.type.includes('range');
 			const type = this.type;
@@ -131,6 +160,54 @@ export default {
 				val = parser(val, format, this.separator);
 			}
 			return (isRange || this.multiple) ? (val || []) : [val];
+		},
+		formatDate(value) {
+			const format = DEFAULT_FORMATS[this.type];
+			if (this.multiple) {
+				const formatter = TYPE_VALUE_RESOLVER_MAP.multiple.formatter;
+				return formatter(value, this.format || format, this.separator);
+			} else {
+				const { formatter } = (
+					TYPE_VALUE_RESOLVER_MAP[this.type]
+                        || TYPE_VALUE_RESOLVER_MAP.default
+				);
+				return formatter(value, this.format || format, this.separator);
+			}
+		},
+		onPick(dates, visible = false, type) {
+			if (this.multiple) {
+				console.log(2222);
+				
+			} else {
+				dates = this.parseDate(dates);
+				this.internalValue = Array.isArray(dates) ? dates : [dates];
+				console.log(this.internalValue, '00000');
+				
+			}
+			 if (this.internalValue[0]) this.focusedDate = this.internalValue[0];
+			this.focusedTime = {
+				...this.focusedTime,
+				time: this.internalValue.map(extractTime)
+			};
+			if (!this.isConfirm) this.onSelectionModeChange(this.type); // reset the selectionMode
+			if (!this.isConfirm) this.visible = visible;
+			this.emitChange(type);
+		},
+		// 没搞懂这个方法有什么作用
+		dispatch(componentName, eventName, params) {
+			let parent = this.$parent || this.$root;
+			let name = parent.$options.name;
+
+			while (parent && (!name || name !== componentName)) {
+				parent = parent.$parent;
+
+				if (parent) {
+					name = parent.$options.name;
+				}
+			}
+			if (parent) {
+				parent.$emit(...[eventName].concat(params));
+			}
 		}
 	}
 };

@@ -7,7 +7,7 @@
 			:seconds="timeSlots[2]"
 			@change="handleChange"
 		/>
-		<div class="vc-time-panel__confirm">
+		<div v-if="confirm" class="vc-time-panel__confirm">
 			<vc-button @click="handleCancel">取消</vc-button>
 			<vc-button type="primary" @click="handleOk">确定</vc-button>
 		</div>
@@ -38,6 +38,10 @@ export default {
 		format: {
 			type: String,
 			default: 'HH:mm:ss'
+		},
+		confirm: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {
@@ -52,8 +56,9 @@ export default {
 		}
 	},
 	watch: {
-		value() {
-			let newVal = date[0] || initTimeDate();
+		value(res) {
+			// 可能需要修改
+			let newVal = res[0] || this.date[0] || initTimeDate();
 			newVal = new Date(newVal);
 			this.date = newVal;
 		}
@@ -67,8 +72,6 @@ export default {
 			Object.keys(date).forEach(type => {
 				newDate[`set${capitalize(type)}`](date[type]);
 			});
-			console.log(newDate);
-			
 			if (emit) this.$emit('pick', newDate, 'time');
 		},
 		handleCancel() {

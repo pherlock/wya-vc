@@ -83,8 +83,6 @@ export default {
 	},
 	computed: {
 		hoursArray() {
-			console.log(22323);
-			
 			let hour = [];
 			const focusedHour = this.focusedColumn === 0 && this.focusedTime[0];
 			for (let i = 0; i < 24; i++) {
@@ -130,19 +128,14 @@ export default {
 	watch: {
 		// 检测时分秒，把对应的列移到指定位置
 		hours(val) {
-			console.log('测了');
-			
 			if (!this.compiled) return;
 			this.scroll('hours', this.hoursArray.findIndex(obj => obj.val == val));
 		},
 		minutes(val) {
-			console.log(val);
-			
 			if (!this.compiled) return;
 			this.scroll('minutes', this.minutesArray.findIndex(obj => obj.val == val));
 		},
 		seconds(val) {
-			console.log(val);
 			if (!this.compiled) return;
 			this.scroll('seconds', this.secondsArray.findIndex(obj => obj.val == val));
 		},
@@ -180,6 +173,10 @@ export default {
 			// }
 			return index;
 		},
+		updateFocusedTime(col, time) {
+			this.focusedColumn = col;
+			this.focusedTime = time.slice();
+		}
 	},
 };
 </script>

@@ -1,6 +1,7 @@
 <template>
 	<div class="vc-time-picker">
 		<vc-dropdown
+			v-model="isOpen"
 			trigger="click"
 			placement="bottom"
 			@click.native="handleDropStop"
@@ -24,6 +25,8 @@
 					:confirm="isConfirm"
 					:selection-mode="selectionMode"
 					@pick="onPick"
+					@pick-success="handlePickSuccess"
+					@pick-clear="handleClear"
 				/>
 			</template>
 		</vc-dropdown>
@@ -95,7 +98,8 @@ export default {
 		return {
 			internalValue: initialValue,
 			focusedDate: initialValue[0] || new Date(),
-			selectionMode: this.onSelectionModeChange(this.type)
+			selectionMode: this.onSelectionModeChange(this.type),
+			isOpen: false
 		};
 	},
 	computed: {
@@ -130,10 +134,11 @@ export default {
 
 		},
 		handleFocus() {
-
+			console.log('focus');
+			
 		},
 		handleBlur() {
-
+			console.log('blur');
 		},
 		handleEnter() {
 
@@ -192,6 +197,17 @@ export default {
 			if (!this.isConfirm) this.onSelectionModeChange(this.type); // reset the selectionMode
 			if (!this.isConfirm) this.visible = visible;
 			this.emitChange(type);
+		},
+		handlePickSuccess() {
+			console.log(4444);
+			
+			this.isOpen = false;
+			this.$emit('ok');
+		},
+		handleClear() {
+			this.internalValue = [];
+			this.isOpen = false;
+			this.$emit('clear');
 		},
 		// 没搞懂这个方法有什么作用
 		dispatch(componentName, eventName, params) {

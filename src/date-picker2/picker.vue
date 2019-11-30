@@ -1,7 +1,8 @@
 <template>
 	<div class="vc-time-picker">
-		<vc-dropdown
+		<vc-popover
 			v-model="isOpen"
+			:portal-class-name="['is-padding-none']"
 			trigger="click"
 			placement="bottom"
 			@click.native="handleDropStop"
@@ -10,13 +11,16 @@
 				:value="timeValue"
 				:placeholder="placeholder"
 				:disabled="disabled"
+				:readonly="readonly"
 				clearable
 				@change="handleChange"
 				@focus="handleFocus"
+				@click.native="handleFocus"
 				@blur="handleBlur"
 				@enter="handleEnter"
+				@keydown="handleKeydown"
 			/>
-			<template #list>
+			<template #content>
 				<component
 					ref="pickerPanel"
 					:is="panel"
@@ -29,7 +33,7 @@
 					@pick-clear="handleClear"
 				/>
 			</template>
-		</vc-dropdown>
+		</vc-popover>
 	</div>
 </template>
 <script>
@@ -88,6 +92,10 @@ export default {
 		separator: {
 			type: String,
 			default: '-'
+		},
+		readonly: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {
@@ -134,16 +142,18 @@ export default {
 
 		},
 		handleFocus() {
-			console.log('focus');
-			
 		},
 		handleBlur() {
-			console.log('blur');
+			
 		},
 		handleEnter() {
 
 		},
 		handleDropStop() {
+			
+		},
+		handleKeydown() {
+			console.log(3333);
 			
 		},
 		emitChange(type) {
@@ -199,8 +209,6 @@ export default {
 			this.emitChange(type);
 		},
 		handlePickSuccess() {
-			console.log(4444);
-			
 			this.isOpen = false;
 			this.$emit('ok');
 		},

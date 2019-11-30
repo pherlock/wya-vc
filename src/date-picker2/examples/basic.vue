@@ -5,6 +5,7 @@
 		<vc-time-picker
 			:value="value"
 			confirm
+			readonly
 		/>
 	</div>
 </template>

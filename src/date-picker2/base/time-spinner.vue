@@ -112,13 +112,13 @@ export default {
 		},
 		secondsArray() {
 			let second = [];
-			const focusedMinute = this.focusedColumn === 2 && this.focusedTime[2];
+			const focusedSecond = this.focusedColumn === 2 && this.focusedTime[2];
 			for (let i = 0; i < 60; i++) {
 				let oSecond = {
 					val: i,
 					selected: false
 				};
-				second.focused = i === focusedMinute;
+				second.focused = i === focusedSecond;
 				if (this.seconds == i) oSecond.selected = true;
 				second.push(oSecond);
 			}
@@ -142,11 +142,16 @@ export default {
 		focusedTime(updated, old) {
 			timeParts.forEach((part, i) => {
 				if (updated[i] === old[i] || typeof updated[i] === 'undefined') return;
-				const valueIndex = this[`${part}Array`].findIndex(obj => obj.text === updated[i]);
+				const valueIndex = this[`${part}Array`].findIndex(obj => obj.val === updated[i]);
+				console.log(valueIndex);
+				
 				this.scroll(part, valueIndex);
 			});
 		}
 
+	},
+	created() {
+		this.updateFocusedTime(0, [this.hours, this.minutes, this.seconds]);
 	},
 	mounted() {
 		this.$nextTick(() => this.compiled = true);
@@ -174,7 +179,7 @@ export default {
 			return index;
 		},
 		updateFocusedTime(col, time) {
-			this.focusedColumn = col;
+			// this.focusedColumn = col;
 			this.focusedTime = time.slice();
 		}
 	},

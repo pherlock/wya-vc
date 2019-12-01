@@ -37,6 +37,7 @@
 	</div>
 </template>
 <script>
+import Extends from "../extends";
 import Input from "../input/index";
 import Popover from "../popover/index";
 import Dropdown from "../dropdown/index";
@@ -58,9 +59,7 @@ export default {
 		'vc-popover': Popover,
 		'vc-dropdown': Dropdown
 	},
-	filters: {
-
-	},
+	mixins: [...Extends.mixins(['emitter'])],
 	props: {
 		placeholder: {
 			type: String,
@@ -159,7 +158,7 @@ export default {
 		emitChange(type) {
 			this.$nextTick(() => {
 				this.$emit('change', this.publicStringValue, type);
-				this.dispatch('FormItem', 'form-change', this.publicStringValue);
+				this.dispatch('vc-form-item', 'form-change', this.publicStringValue);
 			});
 		},
 		parseDate(val) {
@@ -236,22 +235,6 @@ export default {
 			this.isOpen = false;
 			this.$emit('clear');
 		},
-		// 没搞懂这个方法有什么作用
-		dispatch(componentName, eventName, params) {
-			let parent = this.$parent || this.$root;
-			let name = parent.$options.name;
-
-			while (parent && (!name || name !== componentName)) {
-				parent = parent.$parent;
-
-				if (parent) {
-					name = parent.$options.name;
-				}
-			}
-			if (parent) {
-				parent.$emit(...[eventName].concat(params));
-			}
-		}
 	}
 };
 </script>

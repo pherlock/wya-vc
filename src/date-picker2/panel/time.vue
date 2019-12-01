@@ -27,9 +27,6 @@ export default {
 		'vc-time-spinner': TimeSpinner,
 		'vc-button': Button
 	},
-	filters: {
-		
-	},
 	props: {
 		value: {
 			type: Array,

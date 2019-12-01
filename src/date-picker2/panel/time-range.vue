@@ -73,15 +73,13 @@ export default {
 			this.dateEnd = dateEnd || initTimeDate();
 			console.log(this.dateStart);
 			console.log(this.dateEnd);
-
-			
 		}
 	},
 	created() {
 		
 	},
 	methods: {
-	 handleChange(start, end, emit = true) {
+		handleChange(start, end, emit = true) {
 			const dateStart = new Date(this.dateStart);
 			let dateEnd = new Date(this.dateEnd);
 			// 设置开始时间

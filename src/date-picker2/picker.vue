@@ -28,7 +28,7 @@
 					:value="internalValue"
 					:confirm="isConfirm"
 					:selection-mode="selectionMode"
-					@pick="onPick"
+					@pick="handlePick"
 					@pick-success="handlePickSuccess"
 					@pick-clear="handleClear"
 				/>
@@ -208,7 +208,7 @@ export default {
 				return formatter(value, this.format || format, this.separator);
 			}
 		},
-		onPick(dates, visible = false, type) {
+		handlePick(dates, visible = false, type) {
 			if (this.multiple) {
 				console.log(2222);
 				

@@ -10,8 +10,9 @@ export default {
 	},
 	props: {
 		type: {
+			type: String,
+			default: 'time',
 			validator: v => /(time|timerange)/.test(v),
-			default: 'time'
 		}
 	},
 	computed: {

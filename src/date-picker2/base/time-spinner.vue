@@ -143,8 +143,6 @@ export default {
 			timeParts.forEach((part, i) => {
 				if (updated[i] === old[i] || typeof updated[i] === 'undefined') return;
 				const valueIndex = this[`${part}Array`].findIndex(obj => obj.val === updated[i]);
-				console.log(valueIndex);
-				
 				this.scroll(part, valueIndex);
 			});
 		}

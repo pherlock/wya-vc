@@ -171,8 +171,27 @@ export default {
 			).parser;
 			const format = this.format || DEFAULT_FORMATS[type];
 			// const multipleParser = TYPE_VALUE_RESOLVER_MAP.multiple.parser;
+			console.log(445454);
+			
 			if (val && type === 'time' && !(val instanceof Date)) {
 				val = parser(val, format, this.separator);
+			} else if (isRange) {
+				if (!val) {
+					val = [null, null];
+				} else if (typeof val === 'string') {
+					val = parser(val, format, this.separator);
+				} else if (type === 'timerange') {
+					val = parser(val, format, this.separator).map(v => v || '');
+				} else {
+					const [start, end] = val;
+					if (start instanceof Date && end instanceof Date) {
+						val = val.map(date => new Date(date));
+					} else if (typeof start === 'string' && typeof end === 'string') {
+						val = parser(val.join(this.separator), format, this.separator);
+					} else if (!start || !end) {
+						val = [null, null];
+					}
+				}
 			}
 			return (isRange || this.multiple) ? (val || []) : [val];
 		},

@@ -7,6 +7,12 @@
 			confirm
 			readonly
 		/>
+		<vc-time-picker
+			:value="value2"
+			type="timerange"
+			confirm
+			readonly
+		/>
 	</div>
 </template>
 <script>
@@ -19,7 +25,8 @@ export default {
 	},
 	data() {
 		return {
-			value: '01:01:00'
+			value: '01:01:00',
+			value2: ['09:41:00', '12:00:00']
 		};
 	},
 	computed: {

@@ -8,8 +8,8 @@
 			@change="handleChange"
 		/>
 		<div v-if="confirm" class="vc-time-panel__confirm">
-			<vc-button @click="handleClear">清空</vc-button>
-			<vc-button type="primary" @click="handleOk">确定</vc-button>
+			<vc-button size="small" @click="handleClear">清空</vc-button>
+			<vc-button size="small" type="primary" @click="handleOk">确定</vc-button>
 		</div>
 	</div>
 </template>

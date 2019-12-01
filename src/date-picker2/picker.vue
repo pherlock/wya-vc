@@ -77,10 +77,6 @@ export default {
 			type: Boolean,
 			default: false
 		},
-		multiple: {
-			type: Boolean,
-			default: false
-		},
 		disabled: {
 			type: Boolean,
 			default: false
@@ -116,6 +112,12 @@ export default {
 		timeValue() {
 			return this.formatDate(this.internalValue);
 		},
+		publicVModelValue() {
+			const isRange = this.type.includes('range');
+			let val = this.internalValue.map(date => (date instanceof Date ? new Date(date) : (date || '')));
+			if (this.type.match(/^time/)) val = val.map(this.formatDate);
+			return isRange ? val : val[0];
+		},
 		publicStringValue() {
 			const { formatDate, publicVModelValue, type } = this;
 			if (type.match(/^time/)) return publicVModelValue;
@@ -127,6 +129,12 @@ export default {
 	watch: {
 		value(val) {
 			this.internalValue = this.parseDate(val);
+		},
+		 publicVModelValue(now, before) {
+			const newValue = JSON.stringify(now);
+			const oldValue = JSON.stringify(before);
+			const shouldEmitInput = newValue !== oldValue || typeof now !== typeof before;
+			if (shouldEmitInput) this.$emit('input', now); // to update v-model
 		},
 	},
 	mounted() {
@@ -196,28 +204,16 @@ export default {
 		},
 		formatDate(value) {
 			const format = DEFAULT_FORMATS[this.type];
-			if (this.multiple) {
-				const formatter = TYPE_VALUE_RESOLVER_MAP.multiple.formatter;
-				return formatter(value, this.format || format, this.separator);
-			} else {
-				const { formatter } = (
-					TYPE_VALUE_RESOLVER_MAP[this.type]
+			const { formatter } = (
+				TYPE_VALUE_RESOLVER_MAP[this.type]
                         || TYPE_VALUE_RESOLVER_MAP.default
-				);
-				return formatter(value, this.format || format, this.separator);
-			}
+			);
+			return formatter(value, this.format || format, this.separator);
 		},
 		handlePick(dates, visible = false, type) {
-			if (this.multiple) {
-				console.log(2222);
-				
-			} else {
-				dates = this.parseDate(dates);
-				this.internalValue = Array.isArray(dates) ? dates : [dates];
-				console.log(this.internalValue, '00000');
-				
-			}
-			 if (this.internalValue[0]) this.focusedDate = this.internalValue[0];
+			dates = this.parseDate(dates);
+			this.internalValue = Array.isArray(dates) ? dates : [dates];
+			if (this.internalValue[0]) this.focusedDate = this.internalValue[0];
 			this.focusedTime = {
 				...this.focusedTime,
 				time: this.internalValue.map(extractTime)

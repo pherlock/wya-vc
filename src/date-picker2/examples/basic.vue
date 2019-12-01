@@ -6,12 +6,15 @@
 			:value="value"
 			confirm
 			readonly
+			@ok="handleOk"
+			@change="handleChange"
 		/>
 		<vc-time-picker
 			:value="value2"
 			type="timerange"
 			confirm
 			readonly
+			@change="handleChange"
 		/>
 	</div>
 </template>
@@ -33,6 +36,12 @@ export default {
 		
 	},
 	methods: {
+		handleOk() {
+
+		},
+		handleChange(val) {
+			console.log(val);
+		}
 	}
 };
 </script>

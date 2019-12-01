@@ -217,6 +217,7 @@ export default {
 			padding-left: 16px;
 			@include when(selected) {
 				background: #f3f3f3;
+				color: #2d8cf0;
 			}
 			&:hover {
 				background: #f3f3f3;

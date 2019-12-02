@@ -6,6 +6,7 @@
 			:value="value"
 			confirm
 			readonly
+			format="HH时mm分ss秒"
 			@ok="handleOk"
 			@change="handleChange"
 		/>
@@ -14,6 +15,7 @@
 			type="timerange"
 			confirm
 			readonly
+			format="HH时mm分ss秒"
 			@change="handleChange"
 		/>
 	</div>

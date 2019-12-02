@@ -2,9 +2,12 @@
 	<div class="vc-time-picker">
 		<vc-popover
 			v-model="isOpen"
+			:arrow="arrow" 
 			:portal-class-name="['is-padding-none']"
+			:disabled="readonly"
 			trigger="click"
 			placement="bottom"
+			animation="y"
 			@click.native="handleDropStop"
 		>
 			<vc-input
@@ -91,7 +94,11 @@ export default {
 		readonly: {
 			type: Boolean,
 			default: false
-		}
+		},
+		arrow: {
+			type: Boolean,
+			default: false
+		},
 	},
 	data() {
 		const isRange = this.type.includes('range');

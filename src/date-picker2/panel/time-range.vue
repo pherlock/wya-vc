@@ -6,6 +6,8 @@
 				:hours="value[0] && dateStart.getHours()"
 				:minutes="value[0] && dateStart.getMinutes()"
 				:seconds="value[0] && dateStart.getSeconds()"
+				title="开始时间"
+				type="timerange"
 				@change="handleStartChange"
 			/>
 			<div class="vc-time-range-panel__box-line"/>
@@ -14,6 +16,8 @@
 				:hours="value[1] && dateEnd.getHours()"
 				:minutes="value[1] && dateEnd.getMinutes()"
 				:seconds="value[1] && dateEnd.getSeconds()"
+				type="timerange"
+				title="结束时间"
 				@change="handleEndChange"
 			/>
 		</div>
